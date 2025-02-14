@@ -1,10 +1,29 @@
 import { SYSTEM_PROMPT } from './sys.js';
 
+// Define allowed origins
+const ALLOWED_ORIGINS = ['https://*.antitoken.pro', 'http://localhost:3000'];
+
+// Helper function to build CORS headers based on the request origin
+function getCorsHeaders(request) {
+	const origin = request.headers.get('Origin');
+	const headers = {
+		'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+		'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+	};
+	if (origin && ALLOWED_ORIGINS.includes(origin)) {
+		headers['Access-Control-Allow-Origin'] = origin;
+	} else {
+		// Optionally, set to 'null' or omit the header if not allowed
+		headers['Access-Control-Allow-Origin'] = 'null';
+	}
+	return headers;
+}
+
 export async function generatePrediction(env, question, context) {
 	const prompt = `
-Question: ${question}
-${context ? `Additional Context: ${context}` : ''}
-Please analyze this prediction market question and provide a detailed assessment.`;
+  Question: ${question}
+  ${context ? `Additional Context: ${context}` : ''}
+  Please analyse this prediction market question and provide a detailed assessment.`;
 
 	try {
 		const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -15,7 +34,7 @@ Please analyze this prediction market question and provide a detailed assessment
 				'HTTP-Referer': 'https://antitoken.pro',
 			},
 			body: JSON.stringify({
-				model: 'openai/gpt-4', // make this configurable
+				model: 'openai/gpt-4', // TODO: Make this configurable
 				messages: [
 					{ role: 'system', content: SYSTEM_PROMPT },
 					{ role: 'user', content: prompt },
@@ -24,6 +43,16 @@ Please analyze this prediction market question and provide a detailed assessment
 		});
 
 		const data = await response.json();
+
+		if (!response.ok) {
+			// The API returned an error status code, so log and throw an error.
+			throw new Error(`OpenRouter API error ${response.status}: ${JSON.stringify(data)}`);
+		}
+
+		if (!data.choices || data.choices.length === 0) {
+			throw new Error(`Unexpected API response: ${JSON.stringify(data)}`);
+		}
+
 		return data.choices[0].message.content;
 	} catch (error) {
 		console.error('OpenRouter API Error:', error);
@@ -33,16 +62,32 @@ Please analyze this prediction market question and provide a detailed assessment
 
 export default {
 	async fetch(request, env, ctx) {
+		const corsHeaders = getCorsHeaders(request);
+
+		// Handle CORS preflight request
+		if (request.method === 'OPTIONS') {
+			return new Response(null, {
+				status: 204,
+				headers: corsHeaders,
+			});
+		}
+
 		try {
 			const { question, context } = await request.json();
 			const prediction = await generatePrediction(env, question, context);
-			return new Response(prediction, {
-				headers: { 'Content-Type': 'application/json' },
+			return new Response(JSON.stringify({ prediction }), {
+				headers: {
+					'Content-Type': 'application/json',
+					...corsHeaders,
+				},
 			});
 		} catch (error) {
 			return new Response(JSON.stringify({ error: error.message }), {
 				status: 400,
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					...corsHeaders,
+				},
 			});
 		}
 	},

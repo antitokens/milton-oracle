@@ -1,0 +1,16 @@
+// Wrangler config
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "milton-ai",
+	"main": "src/index.js",
+	"dev": {
+		"port": 8080
+	},
+	"compatibility_date": "2025-01-24",
+	"observability": {
+		"enabled": true
+	},
+	"vars": {
+		"OPENROUTER_API_KEY": "..."
+	}
+}
