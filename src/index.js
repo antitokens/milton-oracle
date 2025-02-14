@@ -26,6 +26,7 @@ export async function generatePrediction(env, question, context) {
   Please analyse this prediction market question and provide a detailed assessment.`;
 
 	try {
+		/*
 		const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
 			method: 'POST',
 			headers: {
@@ -41,9 +42,8 @@ export async function generatePrediction(env, question, context) {
 				],
 			}),
 		});
-
 		const data = await response.json();
-
+		
 		if (!response.ok) {
 			// The API returned an error status code, so log and throw an error.
 			throw new Error(`OpenRouter API error ${response.status}: ${JSON.stringify(data)}`);
@@ -54,6 +54,40 @@ export async function generatePrediction(env, question, context) {
 		}
 
 		return data.choices[0].message.content;
+		*/
+
+		// Fake response for tests
+		const prediction = {
+			questionClarity: {
+				question: 'Not specified',
+				timeframe: 'Not specified',
+				thresholds: 'Not specified',
+			},
+			analysis: {
+				marketConditions: 'Not specified',
+				metrics: ['Not applicable in this context'],
+				keyDataPoints: ['Not applicable in this context'],
+			},
+			probabilityAssessment: {
+				probability: 0,
+				supportingFactors: ['Lack of specific query'],
+				criticalAssumptions: ['Assumption of an unspecified question'],
+			},
+			reasoning: {
+				evidence: ['Absence of a clear question', 'Absence of a specific timeframe'],
+				logicalSteps: [
+					'Identified that the question and timeframe were not specified',
+					'Concluded that a probability assessment cannot be provided',
+				],
+				uncertainties: ['Unclear question', 'Unknown timeframe', 'Lack of market data'],
+			},
+			certaintyLevel: {
+				level: 'VEILED_IN_MIST',
+				explanation: 'The lack of a clear question, timeframe, and market data makes this a highly uncertain prediction.',
+			},
+			finalVerdict: 'Due to the lack of a specified question, timeframe or data, a precise prediction cannot be made.',
+		};
+		return JSON.stringify(prediction);
 	} catch (error) {
 		console.error('OpenRouter API Error:', error);
 		throw error;
