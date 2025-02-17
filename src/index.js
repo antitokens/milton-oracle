@@ -1,7 +1,7 @@
 import { SYSTEM_PROMPT } from './sys.js';
 
 // Define allowed origins
-const ORIGINS = ['https://*.antitoken.pro', 'http://localhost:3000'];
+const ORIGINS = ['https://lite.antitoken.pro', 'https://app.antitoken.pro', 'http://localhost:3000'];
 
 // Helper function to build CORS headers based on the request origin
 function getCorsHeaders(request) {
