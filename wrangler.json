@@ -9,4 +9,7 @@
 	"observability": {
 		"enabled": true
 	},
+	"vars": {
+		"OPENROUTER_API_KEY": "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"
+	}
 }
