@@ -52,3 +52,34 @@ GUIDELINES:
 - Key "error" must always have "false" value
 
 If critical information is missing from the context, include this in the uncertainties array rather than making assumptions.`;
+
+export function createEmptyResolution(question) {
+  return {
+    "questionClarity": {
+      "question": question,
+      "timeframe": undefined,
+      "thresholds": undefined
+    },
+    "analysis": {
+      "marketConditions": undefined,
+      "metrics": undefined,
+      "keyDataPoints": undefined
+    },
+    "probabilityAssessment": {
+      "probability": undefined,
+      "supportingFactors": undefined,
+      "criticalAssumptions": undefined
+    },
+    "reasoning": {
+      "evidence": undefined,
+      "logicalSteps": undefined,
+      "uncertainties": undefined
+    },
+    "certaintyLevel": {
+      "level": undefined,
+      "explanation": undefined
+    },
+    "finalVerdict": undefined,
+    "error": true
+  };
+}

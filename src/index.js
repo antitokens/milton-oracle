@@ -1,4 +1,4 @@
-import { SYSTEM_PROMPT } from './sys.js';
+import { SYSTEM_PROMPT, createEmptyResolution } from './sys.js';
 
 // Define allowed origins
 const ORIGINS = ['https://lite.antitoken.pro', 'https://app.antitoken.pro', 'http://localhost:3000'];
@@ -28,37 +28,6 @@ const MODELS = [
   { name: 'Perplexity', id: 'perplexity/perplexity-online' },
   { name: 'Gemini 1.5', id: 'google/gemini-1.5-pro' }
 ];
-
-function createEmptyResolution(question) {
-  return {
-    "questionClarity": {
-      "question": question,
-      "timeframe": undefined,
-      "thresholds": undefined
-    },
-    "analysis": {
-      "marketConditions": undefined,
-      "metrics": undefined,
-      "keyDataPoints": undefined
-    },
-    "probabilityAssessment": {
-      "probability": undefined,
-      "supportingFactors": undefined,
-      "criticalAssumptions": undefined
-    },
-    "reasoning": {
-      "evidence": undefined,
-      "logicalSteps": undefined,
-      "uncertainties": undefined
-    },
-    "certaintyLevel": {
-      "level": undefined,
-      "explanation": undefined
-    },
-    "finalVerdict": undefined,
-    "error": true
-  };
-}
 
 async function queryModel(env, prompt, model, question) {
   try {
@@ -260,13 +229,4 @@ export default {
       });
     }
   },
-};  // Requires at least half of whitelisted models to yield valid assessments
-  if (validProbabilities.length < MODELS.length / 2) return null;const predictions = JSON.parse((await KV.get('predictions')) || '{}');
-    const prediction = predictions[index] || {};
-    
-    if (resolved) {
-      prediction.resolved = resolved;
-      prediction.truth = truth;
-      predictions[index] = prediction;
-      await KV.put('predictions', JSON.stringify(predictions));
-    }
+};
