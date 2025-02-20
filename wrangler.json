@@ -1,21 +1,12 @@
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "milton-oracle",
-	"main": "src/index.js",
-	"dev": {
-		"port": 8080
-	},
-	"compatibility_date": "2025-01-24",
-	"observability": {
-		"enabled": true
-	},
-	"kv_namespaces": [
-		{
-			"binding": "Beta",
-			"id": "5d3c8c4b9b314ad98f71bb831efccbf6"
-		}
-	],
-	"vars": {
-		"OPENROUTER_API_KEY": "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"
-	}
+        "$schema": "node_modules/wrangler/config-schema.json",
+        "name": "milton-oracle",
+        "main": "src/index.js",
+        "dev": {
+                "port": 8080
+        },
+        "compatibility_date": "2025-01-24",
+        "observability": {
+                "enabled": true
+        }
 }
