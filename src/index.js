@@ -20,18 +20,14 @@ function getCorsHeaders(request) {
 }
 
 // Define the models to query
-/*
 const MODELS = [
-	{ name: 'ChatGPT-o3-mini', id: 'openai/gpt-3.5-turbo' },
-	{ name: 'Claude 3.5 Sonnet', id: 'anthropic/claude-3-5-sonnet' },
-	{ name: 'Grok 2', id: 'xai/grok-2' },
-	{ name: 'DeepSeek R1', id: 'deepseek/deepseek-coder' },
-	{ name: 'Perplexity', id: 'perplexity/perplexity-online' },
-	{ name: 'Gemini 1.5', id: 'google/gemini-1.5-pro' },
+	{ name: 'ChatGPT-4o-mini', id: 'openai/gpt-4o-mini' },
+	{ name: 'Grok 2', id: 'x-ai/grok-2' },
+	{ name: 'Claude 3.5 Sonnet', id: 'anthropic/claude-3.5-sonnet' },
+	{ name: 'DeepSeek R1', id: 'deepseek/deepseek-r1:free' },
+	{ name: 'Perplexity R1', id: 'perplexity/r1-1776' },
+	{ name: 'Gemini 2.0 Flash', id: 'google/gemini-2.0-flash-001' },
 ];
-*/
-// Define the models to query
-const MODELS = [{ name: 'ChatGPT-4', id: 'openai/gpt-4' }];
 
 async function queryModel(env, prompt, model, question) {
 	try {
@@ -93,29 +89,25 @@ async function queryModel(env, prompt, model, question) {
 	}
 }
 
-function validateProbability(resolution) {
+function validateProbability(resolution, modelName) {
 	if (!resolution || !resolution.probabilityAssessment) return null;
 
 	const prob = Number(resolution.probabilityAssessment.probability);
 	if (isNaN(prob) || prob < 0 || prob > 100) return null;
 
-	return prob;
+	return { modelName, probability: prob };
 }
 
-function calculateMeanProbability(results) {
-	const validProbabilities = Object.values(results)
-		.map(validateProbability)
-		.filter((prob) => prob !== null);
-
+function calculateMeanProbability(validModels) {
 	// Requires at least half of whitelisted models to yield valid assessments
-	if (validProbabilities.length < MODELS.length / 2) return null;
+	if (validModels.length < MODELS.length / 2) return null;
 
-	const sum = validProbabilities.reduce((acc, val) => acc + val, 0);
-	return sum / validProbabilities.length;
+	const sum = validModels.reduce((acc, model) => acc + model.probability, 0);
+	return sum / validModels.length;
 }
 
 export async function generatePrediction(env, question, context, index) {
-	const KV = Beta;
+	const KV = env.Beta;
 	const prompt = `
 Question: ${question}
 ${context ? `Additional Context: ${context}` : ''}
@@ -129,7 +121,6 @@ Please analyse this prediction market question and provide a detailed assessment
 		const predictions = JSON.parse((await KV.get(predictionsKey)) || '{}');
 
 		const prediction = predictions[index] || {};
-		let resolution;
 
 		// Check if we have existing resolutions and resolved flag set
 		if (resolutions && prediction.resolved) {
@@ -138,36 +129,35 @@ Please analyse this prediction market question and provide a detailed assessment
 
 		// Query all models in parallel
 		const results = {};
-		const modelPromises = MODELS.map((model) =>
+		const resolution = MODELS.map((model) =>
 			queryModel(env, prompt, model, question).then((resolution) => {
 				results[model.name] = resolution;
 				return resolution;
 			})
 		);
 
-		await Promise.all(modelPromises);
+		await Promise.all(resolution);
+
+		// Get valid models with their names
+		const validModels = Object.entries(results)
+			.map(([modelName, resolution]) => validateProbability(resolution, modelName))
+			.filter((result) => result !== null);
 
 		// Calculate mean probability from all valid model predictions
-		const meanProbability = calculateMeanProbability(results);
+		const meanProbability = calculateMeanProbability(validModels);
 
 		// Add aggregate metrics to the results
-		const validModels = Object.values(results)
-			.map(validateProbability)
-			.filter((prob) => prob !== null);
-
 		results.aggregate = {
 			meanProbability,
-			validModels: validModels,
-			allModels: MODELS,
+			validModelsCount: validModels.length,
+			validModels: validModels.map((model) => model.modelName),
+			totalModelsCount: MODELS.length,
 			individualProbabilities: {},
 		};
 
 		// Add individual probabilities to the aggregate for transparency
-		Object.entries(results).forEach(([modelName, resolution]) => {
-			const prob = validateProbability(resolution);
-			if (prob !== null) {
-				results.aggregate.individualProbabilities[modelName] = prob;
-			}
+		validModels.forEach((model) => {
+			results.aggregate.individualProbabilities[model.modelName] = model.probability;
 		});
 
 		// Calculate truth values based on mean probability
