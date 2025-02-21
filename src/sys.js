@@ -59,29 +59,29 @@ export function createEmptyResolution(question) {
 	return {
 		questionClarity: {
 			question: question,
-			timeframe: undefined,
-			thresholds: undefined,
+			timeframe: '',
+			thresholds: '',
 		},
 		analysis: {
-			marketConditions: undefined,
-			metrics: undefined,
-			keyDataPoints: undefined,
+			marketConditions: '',
+			metrics: '',
+			keyDataPoints: '',
 		},
 		probabilityAssessment: {
-			probability: undefined,
-			supportingFactors: undefined,
-			criticalAssumptions: undefined,
+			probability: '',
+			supportingFactors: '',
+			criticalAssumptions: '',
 		},
 		reasoning: {
-			evidence: undefined,
-			logicalSteps: undefined,
-			uncertainties: undefined,
+			evidence: '',
+			logicalSteps: '',
+			uncertainties: '',
 		},
 		certaintyLevel: {
-			level: undefined,
-			explanation: undefined,
+			level: '',
+			explanation: '',
 		},
-		finalVerdict: undefined,
+		finalVerdict: '',
 		error: true,
 	};
 }

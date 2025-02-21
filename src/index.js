@@ -174,7 +174,7 @@ Please analyse this prediction market question and provide a detailed assessment
 		// Get existing resolution status or create new object
 		const predictionsKey = 'predictions';
 		const resolutionsKey = 'resolutions_' + index;
-		const resolutions = JSON.parse((await KV.get(resolutionsKey)) || '{}'); //
+		const resolutions = JSON.parse((await KV.get(resolutionsKey)) || '{}');
 		const predictions = JSON.parse((await KV.get(predictionsKey)) || '{}');
 
 		const prediction = predictions[index] || {};
