@@ -12,10 +12,10 @@
 	"kv_namespaces": [
 		{
 			"binding": "MY_KV",
-			"id": "5d3c8c1b9b314ae98f71bb831efccbf6"
+			"id": "5d3...bf6"
 		}
 	],
 	"vars": {
-		"OPENROUTER_API_KEY": "sk-or-v1-53c609728a4a23ebdac0ca43ab614422279c01adba98fa7d23531c39a872059"
+		"OPENROUTER_API_KEY": "sk-or-v1-53c...059"
 	}
 }

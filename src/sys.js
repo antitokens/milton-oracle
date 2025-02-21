@@ -42,44 +42,46 @@ REQUIRED OUTPUT FORMAT (JSON):
 }
 
 GUIDELINES:
-- Respond ONLY in valid JSON format
-- Use ONLY the provided question and context
-- Do not introduce external information
-- Express probability as a number (0-100)
-- Acknowledge data limitations explicitly
-- Focus on measurable metrics from context
-- Stay within the specified timeframe
-- Key "error" must always have "false" value
-
-If critical information is missing from the context, include this in the uncertainties array rather than making assumptions.`;
+- Response MUST contain ONLY the output JSON in a
+  VALID format; no other text or markdown content
+- Use ONLY the provided question and context data
+- DO NOT introduce external information or data
+- If critical information is missing from the 
+  context data, include this in the uncertainties 
+  array instead of making assumptions.
+- ALWAYS express probability as a number [0-100]%
+- Acknowledge data limitations EXPLICITLY, if any
+- Focus on measurable metrics from the context
+- ALWAYS stay within the specified timeframe
+- Key "error" MUST ALWAYS have "false" as value`;
 
 export function createEmptyResolution(question) {
-  return {
-    "questionClarity": {
-      "question": question,
-      "timeframe": undefined,
-      "thresholds": undefined
-    },
-    "analysis": {
-      "marketConditions": undefined,
-      "metrics": undefined,
-      "keyDataPoints": undefined
-    },
-    "probabilityAssessment": {
-      "probability": undefined,
-      "supportingFactors": undefined,
-      "criticalAssumptions": undefined
-    },
-    "reasoning": {
-      "evidence": undefined,
-      "logicalSteps": undefined,
-      "uncertainties": undefined
-    },
-    "certaintyLevel": {
-      "level": undefined,
-      "explanation": undefined
-    },
-    "finalVerdict": undefined,
-    "error": true
-  };
+	return {
+		questionClarity: {
+			question: question,
+			timeframe: undefined,
+			thresholds: undefined,
+		},
+		analysis: {
+			marketConditions: undefined,
+			metrics: undefined,
+			keyDataPoints: undefined,
+		},
+		probabilityAssessment: {
+			probability: undefined,
+			supportingFactors: undefined,
+			criticalAssumptions: undefined,
+		},
+		reasoning: {
+			evidence: undefined,
+			logicalSteps: undefined,
+			uncertainties: undefined,
+		},
+		certaintyLevel: {
+			level: undefined,
+			explanation: undefined,
+		},
+		finalVerdict: undefined,
+		error: true,
+	};
 }
